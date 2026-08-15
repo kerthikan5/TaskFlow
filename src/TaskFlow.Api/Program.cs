@@ -1,14 +1,18 @@
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+// ─────────────────────────────────────────────────────────
+// Services
+// ─────────────────────────────────────────────────────────
 
 builder.Services.AddControllers();
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
+
+// ─────────────────────────────────────────────────────────
+// Middleware pipeline
+// ─────────────────────────────────────────────────────────
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
@@ -19,5 +23,10 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.MapControllers();
+
+// Health check endpoint — simple, no dependencies
+app.MapGet("/health", () => Results.Ok(new { status = "healthy" }))
+   .WithName("HealthCheck")
+   .AllowAnonymous();
 
 app.Run();

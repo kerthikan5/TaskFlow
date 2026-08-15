@@ -5,6 +5,15 @@
 
 # dotenv files
 .env
+.env.*
+!.env.example
+
+# ASP.NET Core local settings overrides (may contain secrets)
+appsettings.Local.json
+appsettings.*.Local.json
+
+# .NET User Secrets (stored in AppData, not the project, but just in case)
+secrets.json
 
 # User-specific files
 *.rsuser
