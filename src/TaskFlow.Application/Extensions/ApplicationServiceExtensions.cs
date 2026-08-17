@@ -12,6 +12,7 @@ public static class ApplicationServiceExtensions
         services.AddScoped<IUserService, UserService>();
         services.AddScoped<IProjectService, ProjectService>();
         services.AddScoped<IProjectMemberService, ProjectMemberService>();
+        services.AddScoped<ITaskService, TaskService>();
         return services;
     }
 }
