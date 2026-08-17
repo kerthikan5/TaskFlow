@@ -66,7 +66,6 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-// Authentication MUST come before Authorization
 app.UseAuthentication();
 app.UseAuthorization();
 
@@ -78,3 +77,6 @@ app.MapGet("/health", () => Results.Ok(new { status = "healthy" }))
    .AllowAnonymous();
 
 app.Run();
+
+// Exposed for WebApplicationFactory in IntegrationTests
+public partial class Program { }
