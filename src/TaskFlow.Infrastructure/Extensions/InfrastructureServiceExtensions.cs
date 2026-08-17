@@ -2,13 +2,11 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using TaskFlow.Application.Common.Interfaces;
+using TaskFlow.Infrastructure.Authentication;
 using TaskFlow.Infrastructure.Persistence;
 
 namespace TaskFlow.Infrastructure.Extensions;
 
-/// <summary>
-/// Extension methods that register all Infrastructure services with the DI container.
-/// </summary>
 public static class InfrastructureServiceExtensions
 {
     public static IServiceCollection AddInfrastructure(
@@ -21,8 +19,11 @@ public static class InfrastructureServiceExtensions
                 configuration.GetConnectionString("DefaultConnection") ?? "Data Source=taskflow.db");
         });
 
-        // Register IAppDbContext pointing to AppDbContext instance
         services.AddScoped<IAppDbContext>(provider => provider.GetRequiredService<AppDbContext>());
+
+        // Configure JWT settings
+        services.Configure<JwtOptions>(configuration.GetSection(JwtOptions.SectionName));
+        services.AddSingleton<IJwtTokenGenerator, JwtTokenGenerator>();
 
         return services;
     }
