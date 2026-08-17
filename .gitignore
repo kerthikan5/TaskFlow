@@ -8,6 +8,12 @@
 .env.*
 !.env.example
 
+# SQLite Database files
+*.db
+*.db-journal
+*.db-shm
+*.db-wal
+
 # ASP.NET Core local settings overrides (may contain secrets)
 appsettings.Local.json
 appsettings.*.Local.json

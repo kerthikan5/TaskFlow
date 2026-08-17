@@ -1,3 +1,5 @@
+using TaskFlow.Infrastructure.Extensions;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // ─────────────────────────────────────────────────────────
@@ -6,6 +8,9 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 builder.Services.AddOpenApi();
+
+// Infrastructure: registers AppDbContext + PostgreSQL
+builder.Services.AddInfrastructure(builder.Configuration);
 
 // ─────────────────────────────────────────────────────────
 // Middleware pipeline
@@ -24,7 +29,7 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-// Health check endpoint — simple, no dependencies
+// Health check — returns 200 OK, no DB dependency yet
 app.MapGet("/health", () => Results.Ok(new { status = "healthy" }))
    .WithName("HealthCheck")
    .AllowAnonymous();
