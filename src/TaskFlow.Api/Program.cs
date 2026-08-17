@@ -1,3 +1,4 @@
+using TaskFlow.Application.Extensions;
 using TaskFlow.Infrastructure.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -9,7 +10,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 builder.Services.AddOpenApi();
 
-// Infrastructure: registers AppDbContext + PostgreSQL
+// Register Application & Infrastructure layer services
+builder.Services.AddApplication();
 builder.Services.AddInfrastructure(builder.Configuration);
 
 // ─────────────────────────────────────────────────────────
@@ -29,7 +31,7 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-// Health check — returns 200 OK, no DB dependency yet
+// Health check — returns 200 OK
 app.MapGet("/health", () => Results.Ok(new { status = "healthy" }))
    .WithName("HealthCheck")
    .AllowAnonymous();

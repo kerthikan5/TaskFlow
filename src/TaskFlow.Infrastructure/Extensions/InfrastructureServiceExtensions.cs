@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using TaskFlow.Application.Common.Interfaces;
 using TaskFlow.Infrastructure.Persistence;
 
 namespace TaskFlow.Infrastructure.Extensions;
@@ -19,6 +20,9 @@ public static class InfrastructureServiceExtensions
             options.UseSqlite(
                 configuration.GetConnectionString("DefaultConnection") ?? "Data Source=taskflow.db");
         });
+
+        // Register IAppDbContext pointing to AppDbContext instance
+        services.AddScoped<IAppDbContext>(provider => provider.GetRequiredService<AppDbContext>());
 
         return services;
     }
