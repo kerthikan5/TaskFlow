@@ -1,62 +1,116 @@
 import { useEffect, useState } from 'react';
-import { CheckSquare } from 'lucide-react';
+import { CheckSquare, AlertCircle } from 'lucide-react';
 import { tasksApi } from '../api/tasksApi';
 import type { TaskResponse } from '../types';
-import { TaskStatusLabel, TaskPriorityLabel, TaskStatus } from '../types';
+import { TaskStatusLabel, TaskPriorityLabel, TaskStatus, TaskPriority } from '../types';
+
+// ─── Lookup tables ───────────────────────────────────────────────────────────
+
+const PRIORITY_CLASS: Record<TaskPriority, string> = {
+  [TaskPriority.Low]: 'priority-low',
+  [TaskPriority.Medium]: 'priority-medium',
+  [TaskPriority.High]: 'priority-high',
+  [TaskPriority.Critical]: 'priority-critical',
+};
+
+// Keeps the filter buttons DRY — -1 represents "All".
+const FILTER_OPTIONS: [number, string][] = [
+  [-1, 'All'],
+  [TaskStatus.ToDo, 'To Do'],
+  [TaskStatus.InProgress, 'In Progress'],
+  [TaskStatus.Completed, 'Completed'],
+  [TaskStatus.Cancelled, 'Cancelled'],
+];
+
+// ─── Component ───────────────────────────────────────────────────────────────
 
 export function MyTasksPage() {
   const [tasks, setTasks] = useState<TaskResponse[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
   const [filter, setFilter] = useState<TaskStatus | -1>(-1);
 
   const load = () => {
     setLoading(true);
-    tasksApi.getMyAssigned({ pageSize: 50 })
+    setError('');
+    tasksApi
+      .getMyAssigned({ pageSize: 100 })
       .then(r => setTasks(r.data.items))
+      .catch(() => setError('Failed to load your tasks. Please refresh.'))
       .finally(() => setLoading(false));
   };
 
   useEffect(() => { load(); }, []);
 
   const handleStatusChange = async (taskId: string, status: TaskStatus) => {
-    await tasksApi.updateStatus(taskId, status);
-    load();
+    try {
+      await tasksApi.updateStatus(taskId, status);
+      // Optimistic update — no full reload needed for a status change.
+      setTasks(prev =>
+        prev.map(t => t.id === taskId ? { ...t, status } : t),
+      );
+    } catch {
+      alert('Could not update task status. Please refresh and try again.');
+    }
   };
 
   const filtered = filter === -1 ? tasks : tasks.filter(t => t.status === filter);
 
-  const priorityColors: Record<number, string> = { 0: 'priority-low', 1: 'priority-medium', 2: 'priority-high', 3: 'priority-critical' };
-  const statusColors: Record<number, string> = { 0: 'status-todo', 1: 'status-inprogress', 2: 'status-completed', 3: 'status-cancelled' };
+  // ── Render ─────────────────────────────────────────────────────────────────
 
   return (
     <div className="page">
       <div className="page-header">
         <div>
           <h1 className="page-title">My Tasks</h1>
-          <p className="page-subtitle">All tasks assigned to you across every project.</p>
+          <p className="page-subtitle">
+            All tasks assigned to you, across every project you're a member of.
+          </p>
         </div>
       </div>
 
+      {/* ── Status filter chips ────────────────────────────────────────────── */}
       <div className="filter-bar">
-        {([[-1, 'All'], [TaskStatus.ToDo, 'To Do'], [TaskStatus.InProgress, 'In Progress'], [TaskStatus.Completed, 'Completed']] as [number, string][]).map(([val, label]) => (
+        {FILTER_OPTIONS.map(([val, label]) => (
           <button
             key={val}
             className={`filter-chip ${filter === val ? 'active' : ''}`}
             onClick={() => setFilter(val as TaskStatus | -1)}
           >
             {label}
+            {val === -1 && ` (${tasks.length})`}
+            {val !== -1 && ` (${tasks.filter(t => t.status === val).length})`}
           </button>
         ))}
       </div>
 
-      {loading ? (
+      {/* ── Error state ───────────────────────────────────────────────────── */}
+      {error && (
+        <div className="alert alert-error" style={{ marginBottom: 20 }}>
+          <AlertCircle size={16} />
+          {error}
+        </div>
+      )}
+
+      {/* ── Loading state ─────────────────────────────────────────────────── */}
+      {loading && (
         <div className="loading-inline"><div className="spinner" /></div>
-      ) : filtered.length === 0 ? (
+      )}
+
+      {/* ── Empty state ───────────────────────────────────────────────────── */}
+      {!loading && !error && filtered.length === 0 && (
         <div className="empty-hero">
           <CheckSquare size={48} opacity={0.3} />
-          <p>No tasks found.</p>
+          <p>
+            {filter === -1
+              ? 'No tasks have been assigned to you yet.'
+              : `No ${TaskStatusLabel[filter as TaskStatus]} tasks.`}
+          </p>
         </div>
-      ) : (
+      )}
+
+      {/* ── Task table ────────────────────────────────────────────────────── */}
+      {!loading && !error && filtered.length > 0 && (
         <div className="task-table">
           <div className="task-table-header">
             <span>Task</span>
@@ -65,26 +119,38 @@ export function MyTasksPage() {
             <span>Status</span>
             <span>Due Date</span>
           </div>
+
           {filtered.map(task => (
             <div key={task.id} className="task-row">
               <div>
                 <p className="task-title">{task.title}</p>
-                {task.description && <p className="task-desc-sm">{task.description}</p>}
+                {task.description && (
+                  <p className="task-desc-sm">{task.description}</p>
+                )}
               </div>
+
               <span className="project-link">{task.projectName}</span>
-              <span className={`badge ${priorityColors[task.priority]}`}>{TaskPriorityLabel[task.priority]}</span>
+
+              <span className={`badge ${PRIORITY_CLASS[task.priority as TaskPriority]}`}>
+                {TaskPriorityLabel[task.priority as TaskPriority]}
+              </span>
+
               <select
-                className={`status-select inline ${statusColors[task.status]}`}
+                className={`status-select inline`}
                 value={task.status}
                 onChange={e => handleStatusChange(task.id, Number(e.target.value) as TaskStatus)}
+                aria-label={`Change status for "${task.title}"`}
               >
                 <option value={TaskStatus.ToDo}>To Do</option>
                 <option value={TaskStatus.InProgress}>In Progress</option>
                 <option value={TaskStatus.Completed}>Completed</option>
                 <option value={TaskStatus.Cancelled}>Cancelled</option>
               </select>
+
               <span className="due-date">
-                {task.dueDate ? new Date(task.dueDate).toLocaleDateString() : '—'}
+                {task.dueDate
+                  ? new Date(task.dueDate).toLocaleDateString(undefined, { day: 'numeric', month: 'short', year: 'numeric' })
+                  : '—'}
               </span>
             </div>
           ))}
