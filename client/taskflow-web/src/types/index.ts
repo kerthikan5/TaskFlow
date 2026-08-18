@@ -1,4 +1,4 @@
-// ─── Auth ───────────────────────────────────────────
+// Auth models
 export interface User {
   id: string;
   email: string;
@@ -26,7 +26,7 @@ export interface RegisterRequest {
   lastName: string;
 }
 
-// ─── Projects ────────────────────────────────────────
+// Project models
 export interface ProjectResponse {
   id: string;
   name: string;
@@ -60,7 +60,7 @@ export interface CreateProjectRequest {
   dueDate?: string;
 }
 
-// ─── Members ─────────────────────────────────────────
+// Member models
 export interface ProjectMemberDto {
   userId: string;
   email: string;
@@ -71,7 +71,7 @@ export interface ProjectMemberDto {
   isOwner: boolean;
 }
 
-// ─── Tasks ───────────────────────────────────────────
+// Task models
 export interface TaskResponse {
   id: string;
   title: string;
@@ -105,7 +105,7 @@ export interface PagedResponse<T> {
   totalPages: number;
 }
 
-// ─── Enums ───────────────────────────────────────────
+// Enums
 export enum TaskStatus {
   ToDo = 0,
   InProgress = 1,
@@ -127,7 +127,7 @@ export enum ProjectStatus {
   Archived = 3,
 }
 
-// ─── Labels / Helpers ─────────────────────────────────
+// Display labels
 export const TaskStatusLabel: Record<TaskStatus, string> = {
   [TaskStatus.ToDo]: 'To Do',
   [TaskStatus.InProgress]: 'In Progress',

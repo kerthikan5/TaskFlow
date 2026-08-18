@@ -5,8 +5,6 @@ import { projectsApi } from '../api/projectsApi';
 import type { ProjectResponse } from '../types';
 import { ProjectStatus, ProjectStatusLabel } from '../types';
 
-// ─── Lookup tables ───────────────────────────────────────────────────────────
-
 const STATUS_CLASS: Record<ProjectStatus, string> = {
   [ProjectStatus.Active]: 'badge-active',
   [ProjectStatus.OnHold]: 'badge-warning',
@@ -14,20 +12,17 @@ const STATUS_CLASS: Record<ProjectStatus, string> = {
   [ProjectStatus.Archived]: 'badge-muted',
 };
 
-// ─── Component ───────────────────────────────────────────────────────────────
-
 export function ProjectsPage() {
   const [projects, setProjects] = useState<ProjectResponse[]>([]);
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState('');
 
-  // Create modal state
   const [showModal, setShowModal] = useState(false);
   const [form, setForm] = useState({ name: '', description: '', status: ProjectStatus.Active });
   const [creating, setCreating] = useState(false);
   const [createError, setCreateError] = useState('');
 
-  const load = () => {
+  const loadProjects = () => {
     setLoading(true);
     setLoadError('');
     projectsApi
@@ -37,7 +32,9 @@ export function ProjectsPage() {
       .finally(() => setLoading(false));
   };
 
-  useEffect(() => { load(); }, []);
+  useEffect(() => {
+    loadProjects();
+  }, []);
 
   const handleCreate = async () => {
     if (!form.name.trim()) {
@@ -56,7 +53,7 @@ export function ProjectsPage() {
       });
       setShowModal(false);
       setForm({ name: '', description: '', status: ProjectStatus.Active });
-      load();
+      loadProjects();
     } catch {
       setCreateError('Failed to create project. Please try again.');
     } finally {
@@ -69,7 +66,7 @@ export function ProjectsPage() {
 
     try {
       await projectsApi.delete(id);
-      load();
+      loadProjects();
     } catch {
       alert('Failed to delete project. You may not have permission.');
     }
@@ -98,7 +95,6 @@ export function ProjectsPage() {
         </button>
       </div>
 
-      {/* ── Error banner ──────────────────────────────────────────────────── */}
       {loadError && (
         <div className="alert alert-error" style={{ marginBottom: 20 }}>
           <AlertCircle size={16} />
@@ -106,7 +102,6 @@ export function ProjectsPage() {
         </div>
       )}
 
-      {/* ── Project grid ──────────────────────────────────────────────────── */}
       {loading ? (
         <div className="loading-inline"><div className="spinner" /></div>
       ) : (
@@ -153,7 +148,6 @@ export function ProjectsPage() {
         </div>
       )}
 
-      {/* ── Create project modal ───────────────────────────────────────────── */}
       {showModal && (
         <div className="modal-backdrop" onClick={closeModal}>
           <div className="modal" onClick={e => e.stopPropagation()}>

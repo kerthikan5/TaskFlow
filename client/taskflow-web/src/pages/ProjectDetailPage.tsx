@@ -7,9 +7,6 @@ import type { ProjectDetailsResponse, ProjectMemberDto, TaskResponse } from '../
 import { TaskStatusLabel, TaskPriorityLabel, TaskStatus, TaskPriority } from '../types';
 import { useAuth } from '../contexts/AuthContext';
 
-// ─── Lookup tables ───────────────────────────────────────────────────────────
-
-// Maps TaskStatus to a CSS class used on both the kanban column dot and badges.
 const STATUS_CLASS: Record<TaskStatus, string> = {
   [TaskStatus.ToDo]: 'status-todo',
   [TaskStatus.InProgress]: 'status-inprogress',
@@ -24,14 +21,11 @@ const PRIORITY_CLASS: Record<TaskPriority, string> = {
   [TaskPriority.Critical]: 'priority-critical',
 };
 
-// The three Kanban columns shown on the board.
 const KANBAN_COLUMNS = [
   TaskStatus.ToDo,
   TaskStatus.InProgress,
   TaskStatus.Completed,
 ] as const;
-
-// ─── Component ───────────────────────────────────────────────────────────────
 
 export function ProjectDetailPage() {
   const { id } = useParams<{ id: string }>();
@@ -44,7 +38,6 @@ export function ProjectDetailPage() {
   const [error, setError] = useState('');
   const [activeTab, setActiveTab] = useState<'tasks' | 'members'>('tasks');
 
-  // Task creation modal
   const [showTaskModal, setShowTaskModal] = useState(false);
   const [taskForm, setTaskForm] = useState({
     title: '',
@@ -55,15 +48,12 @@ export function ProjectDetailPage() {
   const [taskCreating, setTaskCreating] = useState(false);
   const [taskError, setTaskError] = useState('');
 
-  // Member invitation modal
   const [showMemberModal, setShowMemberModal] = useState(false);
   const [memberEmail, setMemberEmail] = useState('');
   const [memberAdding, setMemberAdding] = useState(false);
   const [memberError, setMemberError] = useState('');
 
   const isOwner = project?.owner.id === user?.id;
-
-  // ── Data fetching ──────────────────────────────────────────────────────────
 
   const loadAll = () => {
     if (!id) return;
@@ -82,9 +72,9 @@ export function ProjectDetailPage() {
       .finally(() => setLoading(false));
   };
 
-  useEffect(() => { loadAll(); }, [id]);
-
-  // ── Task handlers ──────────────────────────────────────────────────────────
+  useEffect(() => {
+    loadAll();
+  }, [id]);
 
   const handleCreateTask = async () => {
     if (!id || !taskForm.title.trim()) {
@@ -115,16 +105,13 @@ export function ProjectDetailPage() {
   const handleStatusChange = async (taskId: string, status: TaskStatus) => {
     try {
       await tasksApi.updateStatus(taskId, status);
-      // Optimistically update local state so the UI responds instantly.
       setTasks(prev =>
-        prev.map(t => t.id === taskId ? { ...t, status } : t),
+        prev.map(t => (t.id === taskId ? { ...t, status } : t)),
       );
     } catch {
       alert('Could not update task status. Please try again.');
     }
   };
-
-  // ── Member handlers ────────────────────────────────────────────────────────
 
   const handleAddMember = async () => {
     if (!id || !memberEmail.trim()) {
@@ -166,8 +153,6 @@ export function ProjectDetailPage() {
     }
   };
 
-  // ── Render ─────────────────────────────────────────────────────────────────
-
   if (loading) {
     return <div className="loading-inline"><div className="spinner" /></div>;
   }
@@ -185,7 +170,6 @@ export function ProjectDetailPage() {
 
   return (
     <div className="page">
-      {/* ── Page header ─────────────────────────────────────────────────────── */}
       <div className="page-header">
         <div>
           <h1 className="page-title">{project.name}</h1>
@@ -207,7 +191,6 @@ export function ProjectDetailPage() {
         </div>
       </div>
 
-      {/* ── Tabs ────────────────────────────────────────────────────────────── */}
       <div className="tabs">
         <button
           className={`tab ${activeTab === 'tasks' ? 'active' : ''}`}
@@ -225,7 +208,6 @@ export function ProjectDetailPage() {
         </button>
       </div>
 
-      {/* ── Kanban board ────────────────────────────────────────────────────── */}
       {activeTab === 'tasks' && (
         <div className="task-board">
           {KANBAN_COLUMNS.map(col => {
@@ -233,7 +215,6 @@ export function ProjectDetailPage() {
             return (
               <div key={col} className="task-column">
                 <div className="column-header">
-                  {/* The dot uses the same status CSS class as the badge */}
                   <span className={`column-dot ${STATUS_CLASS[col]}`} />
                   <h3>{TaskStatusLabel[col]}</h3>
                   <span className="column-count">{columnTasks.length}</span>
@@ -280,7 +261,6 @@ export function ProjectDetailPage() {
         </div>
       )}
 
-      {/* ── Members list ────────────────────────────────────────────────────── */}
       {activeTab === 'members' && (
         <div className="members-list">
           {members.map(m => (
@@ -295,7 +275,6 @@ export function ProjectDetailPage() {
                 </p>
                 <p className="member-email">{m.email}</p>
               </div>
-              {/* Owner can remove any non-owner; non-owners cannot remove others */}
               {isOwner && !m.isOwner && (
                 <button
                   className="icon-btn danger"
@@ -310,7 +289,6 @@ export function ProjectDetailPage() {
         </div>
       )}
 
-      {/* ── Create task modal ────────────────────────────────────────────────── */}
       {showTaskModal && (
         <div className="modal-backdrop" onClick={() => { setShowTaskModal(false); setTaskError(''); }}>
           <div className="modal" onClick={e => e.stopPropagation()}>
@@ -395,7 +373,6 @@ export function ProjectDetailPage() {
         </div>
       )}
 
-      {/* ── Invite member modal ──────────────────────────────────────────────── */}
       {showMemberModal && (
         <div className="modal-backdrop" onClick={() => { setShowMemberModal(false); setMemberError(''); }}>
           <div className="modal" onClick={e => e.stopPropagation()}>

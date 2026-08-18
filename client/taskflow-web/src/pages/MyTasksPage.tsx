@@ -4,8 +4,6 @@ import { tasksApi } from '../api/tasksApi';
 import type { TaskResponse } from '../types';
 import { TaskStatusLabel, TaskPriorityLabel, TaskStatus, TaskPriority } from '../types';
 
-// ─── Lookup tables ───────────────────────────────────────────────────────────
-
 const PRIORITY_CLASS: Record<TaskPriority, string> = {
   [TaskPriority.Low]: 'priority-low',
   [TaskPriority.Medium]: 'priority-medium',
@@ -13,7 +11,6 @@ const PRIORITY_CLASS: Record<TaskPriority, string> = {
   [TaskPriority.Critical]: 'priority-critical',
 };
 
-// Keeps the filter buttons DRY — -1 represents "All".
 const FILTER_OPTIONS: [number, string][] = [
   [-1, 'All'],
   [TaskStatus.ToDo, 'To Do'],
@@ -22,15 +19,13 @@ const FILTER_OPTIONS: [number, string][] = [
   [TaskStatus.Cancelled, 'Cancelled'],
 ];
 
-// ─── Component ───────────────────────────────────────────────────────────────
-
 export function MyTasksPage() {
   const [tasks, setTasks] = useState<TaskResponse[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [filter, setFilter] = useState<TaskStatus | -1>(-1);
 
-  const load = () => {
+  const loadTasks = () => {
     setLoading(true);
     setError('');
     tasksApi
@@ -40,14 +35,15 @@ export function MyTasksPage() {
       .finally(() => setLoading(false));
   };
 
-  useEffect(() => { load(); }, []);
+  useEffect(() => {
+    loadTasks();
+  }, []);
 
   const handleStatusChange = async (taskId: string, status: TaskStatus) => {
     try {
       await tasksApi.updateStatus(taskId, status);
-      // Optimistic update — no full reload needed for a status change.
       setTasks(prev =>
-        prev.map(t => t.id === taskId ? { ...t, status } : t),
+        prev.map(t => (t.id === taskId ? { ...t, status } : t)),
       );
     } catch {
       alert('Could not update task status. Please refresh and try again.');
@@ -55,8 +51,6 @@ export function MyTasksPage() {
   };
 
   const filtered = filter === -1 ? tasks : tasks.filter(t => t.status === filter);
-
-  // ── Render ─────────────────────────────────────────────────────────────────
 
   return (
     <div className="page">
@@ -69,7 +63,6 @@ export function MyTasksPage() {
         </div>
       </div>
 
-      {/* ── Status filter chips ────────────────────────────────────────────── */}
       <div className="filter-bar">
         {FILTER_OPTIONS.map(([val, label]) => (
           <button
@@ -84,7 +77,6 @@ export function MyTasksPage() {
         ))}
       </div>
 
-      {/* ── Error state ───────────────────────────────────────────────────── */}
       {error && (
         <div className="alert alert-error" style={{ marginBottom: 20 }}>
           <AlertCircle size={16} />
@@ -92,12 +84,10 @@ export function MyTasksPage() {
         </div>
       )}
 
-      {/* ── Loading state ─────────────────────────────────────────────────── */}
       {loading && (
         <div className="loading-inline"><div className="spinner" /></div>
       )}
 
-      {/* ── Empty state ───────────────────────────────────────────────────── */}
       {!loading && !error && filtered.length === 0 && (
         <div className="empty-hero">
           <CheckSquare size={48} opacity={0.3} />
@@ -109,7 +99,6 @@ export function MyTasksPage() {
         </div>
       )}
 
-      {/* ── Task table ────────────────────────────────────────────────────── */}
       {!loading && !error && filtered.length > 0 && (
         <div className="task-table">
           <div className="task-table-header">
@@ -136,7 +125,7 @@ export function MyTasksPage() {
               </span>
 
               <select
-                className={`status-select inline`}
+                className="status-select inline"
                 value={task.status}
                 onChange={e => handleStatusChange(task.id, Number(e.target.value) as TaskStatus)}
                 aria-label={`Change status for "${task.title}"`}

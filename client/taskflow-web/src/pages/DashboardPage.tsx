@@ -7,8 +7,6 @@ import { tasksApi } from '../api/tasksApi';
 import type { ProjectResponse, TaskResponse } from '../types';
 import { TaskStatusLabel, TaskPriorityLabel, TaskStatus } from '../types';
 
-// ─── Lookup tables ───────────────────────────────────────────────────────────
-
 const PROJECT_STATUS_CLASS: Record<number, string> = {
   0: 'badge-active',
   1: 'badge-warning',
@@ -37,8 +35,6 @@ const STATUS_CLASS: Record<number, string> = {
   3: 'status-cancelled',
 };
 
-// ─── Component ───────────────────────────────────────────────────────────────
-
 export function DashboardPage() {
   const { user } = useAuth();
   const [projects, setProjects] = useState<ProjectResponse[]>([]);
@@ -55,7 +51,7 @@ export function DashboardPage() {
         setProjects(pRes.data);
         setTasks(tRes.data.items);
       })
-      .catch(() => setError('Could not load dashboard data. Is the API running?'))
+      .catch(() => setError('Could not load dashboard data. Please check your backend connection.'))
       .finally(() => setLoading(false));
   }, []);
 
@@ -89,7 +85,6 @@ export function DashboardPage() {
         </div>
       </div>
 
-      {/* ── Stats row ─────────────────────────────────────────────────────── */}
       <div className="stats-grid">
         <div className="stat-card">
           <div className="stat-icon" style={{ background: 'rgba(99,102,241,0.15)' }}>
@@ -132,9 +127,7 @@ export function DashboardPage() {
         </div>
       </div>
 
-      {/* ── Two-column overview ────────────────────────────────────────────── */}
       <div className="dashboard-grid">
-        {/* Recent Projects */}
         <div className="card">
           <div className="card-header">
             <h2 className="card-title">Recent Projects</h2>
@@ -161,7 +154,6 @@ export function DashboardPage() {
           </div>
         </div>
 
-        {/* My Assigned Tasks */}
         <div className="card">
           <div className="card-header">
             <h2 className="card-title">My Assigned Tasks</h2>

@@ -1,6 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
-/* ─── Reset & Root ────────────────────────────────── */
+/* Reset & Root Variables */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 :root {
@@ -36,19 +36,19 @@ a { color: var(--accent); text-decoration: none; }
 a:hover { color: var(--accent-hover); }
 input, textarea, select { font-family: inherit; }
 
-/* ─── Scrollbar ───────────────────────────────────── */
+/* Custom Scrollbar */
 ::-webkit-scrollbar { width: 6px; }
 ::-webkit-scrollbar-track { background: var(--bg-2); }
 ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
 
-/* ─── App Shell ───────────────────────────────────── */
+/* App Shell */
 .app-shell {
   display: flex;
   height: 100vh;
   overflow: hidden;
 }
 
-/* ─── Sidebar ─────────────────────────────────────── */
+/* Sidebar Navigation */
 .sidebar {
   width: 240px;
   min-width: 240px;
@@ -123,10 +123,10 @@ input, textarea, select { font-family: inherit; }
 }
 .logout-btn:hover { background: rgba(239,68,68,0.12); color: var(--red); }
 
-/* ─── Main Content ────────────────────────────────── */
+/* Main Content Layout */
 .main-content { flex: 1; overflow-y: auto; }
 
-/* ─── Pages ───────────────────────────────────────── */
+/* Page Layout */
 .page { padding: 32px; max-width: 1200px; }
 
 .page-header {
@@ -139,7 +139,7 @@ input, textarea, select { font-family: inherit; }
 
 .header-actions { display: flex; gap: 8px; }
 
-/* ─── Auth Pages ──────────────────────────────────── */
+/* Authentication Pages */
 .auth-page {
   min-height: 100vh; display: flex; align-items: center; justify-content: center;
   background: radial-gradient(ellipse at 60% 40%, rgba(99,102,241,0.12) 0%, var(--bg) 60%);
@@ -163,7 +163,7 @@ input, textarea, select { font-family: inherit; }
 .auth-form { display: flex; flex-direction: column; gap: 16px; }
 .auth-switch { text-align: center; font-size: 13px; color: var(--text-2); margin-top: 20px; }
 
-/* ─── Form Elements ───────────────────────────────── */
+/* Form Controls */
 .form-group { display: flex; flex-direction: column; gap: 6px; }
 .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 
@@ -196,7 +196,7 @@ input::placeholder, textarea::placeholder { color: var(--text-3); }
 
 textarea { resize: vertical; min-height: 80px; }
 
-/* ─── Buttons ─────────────────────────────────────── */
+/* Button Styles */
 .btn {
   display: inline-flex; align-items: center; gap: 6px;
   padding: 9px 16px; border-radius: var(--radius);
@@ -226,7 +226,7 @@ textarea { resize: vertical; min-height: 80px; }
 .icon-btn:hover { background: var(--bg-3); color: var(--text); }
 .icon-btn.danger:hover { background: rgba(239,68,68,0.12); color: var(--red); }
 
-/* ─── Alerts ──────────────────────────────────────── */
+/* Alert Messages */
 .alert {
   display: flex; align-items: center; gap: 8px;
   padding: 10px 14px; border-radius: var(--radius);
@@ -234,7 +234,7 @@ textarea { resize: vertical; min-height: 80px; }
 }
 .alert-error { background: rgba(239,68,68,0.1); color: #fca5a5; border: 1px solid rgba(239,68,68,0.2); }
 
-/* ─── Cards ───────────────────────────────────────── */
+/* Card Component */
 .card {
   background: var(--bg-2); border: 1px solid var(--border);
   border-radius: var(--radius-lg); padding: 20px;
@@ -244,7 +244,7 @@ textarea { resize: vertical; min-height: 80px; }
 .card-title { font-size: 15px; font-weight: 600; }
 .card-link { font-size: 12px; color: var(--accent); }
 
-/* ─── Lists ───────────────────────────────────────── */
+/* List Component */
 .list { display: flex; flex-direction: column; gap: 2px; }
 .list-item {
   display: flex; align-items: center; gap: 12px;
@@ -258,7 +258,7 @@ textarea { resize: vertical; min-height: 80px; }
 .list-item-title { font-size: 14px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .list-item-meta { font-size: 12px; color: var(--text-3); }
 
-/* ─── Stats Grid ──────────────────────────────────── */
+/* Stats Grid */
 .stats-grid {
   display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
   gap: 14px; margin-bottom: 24px;
@@ -280,7 +280,7 @@ textarea { resize: vertical; min-height: 80px; }
 
 .dashboard-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
 
-/* ─── Project Cards ───────────────────────────────── */
+/* Project Cards */
 .project-grid {
   display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
   gap: 16px;
@@ -303,7 +303,7 @@ textarea { resize: vertical; min-height: 80px; }
 .project-footer { display: flex; align-items: center; justify-content: space-between; }
 .project-owner { font-size: 12px; color: var(--text-3); }
 
-/* ─── Badges ──────────────────────────────────────── */
+/* Badges & Status Indicators */
 .badge {
   display: inline-flex; align-items: center;
   padding: 2px 8px; border-radius: 20px;
@@ -317,19 +317,19 @@ textarea { resize: vertical; min-height: 80px; }
 .badge-muted { background: rgba(107,114,128,0.15); color: #9ca3af; }
 .badge-assignee { background: rgba(59,130,246,0.1); color: #93c5fd; }
 
-/* Priority badges */
+/* Priority Badges */
 .priority-low { background: rgba(16,185,129,0.12); color: #6ee7b7; }
 .priority-medium { background: rgba(245,158,11,0.12); color: #fcd34d; }
 .priority-high { background: rgba(239,68,68,0.12); color: #fca5a5; }
 .priority-critical { background: rgba(139,92,246,0.15); color: #c4b5fd; }
 
-/* Status badges */
+/* Status Badges */
 .status-todo { background: rgba(107,114,128,0.12); color: #9ca3af; }
 .status-inprogress { background: rgba(59,130,246,0.12); color: #93c5fd; }
 .status-completed { background: rgba(16,185,129,0.12); color: #6ee7b7; }
 .status-cancelled { background: rgba(239,68,68,0.12); color: #fca5a5; }
 
-/* ─── Tabs ────────────────────────────────────────── */
+/* Navigation Tabs */
 .tabs { display: flex; gap: 4px; margin-bottom: 20px; border-bottom: 1px solid var(--border); padding-bottom: 0; }
 .tab {
   display: flex; align-items: center; gap: 6px;
@@ -341,7 +341,7 @@ textarea { resize: vertical; min-height: 80px; }
 .tab:hover { color: var(--text); }
 .tab.active { color: var(--accent); border-bottom-color: var(--accent); }
 
-/* ─── Kanban Board ────────────────────────────────── */
+/* Kanban Board Layout */
 .task-board { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
 
 .task-column {
@@ -352,9 +352,7 @@ textarea { resize: vertical; min-height: 80px; }
 
 .column-header { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
 
-/* The kanban column indicator dot. The status class provides the background color.
-   Using background-color directly here since status classes use semi-transparent
-   backgrounds meant for text badges, not solid dots. */
+/* Kanban Column Dot Indicators */
 .column-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; background: currentColor; }
 .column-dot.status-todo { color: #6b7280; }
 .column-dot.status-inprogress { color: #3b82f6; }
@@ -385,10 +383,10 @@ textarea { resize: vertical; min-height: 80px; }
   font-size: 12px; padding: 5px 8px; cursor: pointer;
 }
 
-/* Ensure select dropdown options are visible in dark mode across browsers */
+/* Option dropdown styling for dark theme */
 select option { background: var(--bg-2); color: var(--text); }
 
-/* ─── My Tasks Table ──────────────────────────────── */
+/* Task Table Component */
 .task-table { display: flex; flex-direction: column; gap: 2px; }
 .task-table-header {
   display: grid; grid-template-columns: 2fr 1fr 90px 110px 100px;
@@ -408,7 +406,7 @@ select option { background: var(--bg-2); color: var(--text); }
 .due-date { font-size: 12px; color: var(--text-3); }
 .status-select.inline { min-width: 100px; }
 
-/* ─── Members List ────────────────────────────────── */
+/* Members List Component */
 .members-list { display: flex; flex-direction: column; gap: 8px; }
 .member-row {
   display: flex; align-items: center; gap: 14px;
@@ -420,7 +418,7 @@ select option { background: var(--bg-2); color: var(--text); }
 .member-email { font-size: 12px; color: var(--text-3); margin-top: 2px; }
 .owner-badge { font-size: 10px; font-weight: 700; background: var(--accent-glow); color: var(--accent); padding: 2px 8px; border-radius: 20px; }
 
-/* ─── Filter Bar ──────────────────────────────────── */
+/* Filter Chips */
 .filter-bar { display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap; }
 .filter-chip {
   padding: 5px 14px; border-radius: 20px;
@@ -431,7 +429,7 @@ select option { background: var(--bg-2); color: var(--text); }
 .filter-chip:hover { border-color: var(--accent); color: var(--text); }
 .filter-chip.active { background: var(--accent-glow); border-color: var(--accent); color: var(--accent); font-weight: 600; }
 
-/* ─── Modal ───────────────────────────────────────── */
+/* Modal Component */
 .modal-backdrop {
   position: fixed; inset: 0; background: rgba(0,0,0,0.6);
   display: flex; align-items: center; justify-content: center;
@@ -456,14 +454,14 @@ select option { background: var(--bg-2); color: var(--text); }
 .modal-header h2 { font-size: 16px; font-weight: 700; }
 .modal-footer { display: flex; justify-content: flex-end; gap: 8px; padding-top: 4px; }
 
-/* ─── Empty States ────────────────────────────────── */
+/* Empty States */
 .empty-state { font-size: 13px; color: var(--text-3); padding: 16px; text-align: center; }
 .empty-hero {
   display: flex; flex-direction: column; align-items: center; gap: 12px;
   padding: 60px 20px; color: var(--text-3); font-size: 15px;
 }
 
-/* ─── Loading ─────────────────────────────────────── */
+/* Loading Spinners */
 .loading-screen {
   height: 100vh; display: flex; flex-direction: column;
   align-items: center; justify-content: center;
@@ -482,7 +480,7 @@ select option { background: var(--bg-2); color: var(--text); }
 
 @keyframes spin { to { transform: rotate(360deg); } }
 
-/* ─── Responsive ──────────────────────────────────── */
+/* Media Queries */
 @media (max-width: 900px) {
   .sidebar { width: 200px; min-width: 200px; }
   .dashboard-grid { grid-template-columns: 1fr; }
